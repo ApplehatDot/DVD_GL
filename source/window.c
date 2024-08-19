@@ -75,7 +75,7 @@ void init() {
     unsigned char* image = stbi_load("logo.png", &width, &height, &channels, 0);
     if (image == NULL) {
         fprintf(stderr, "Nie można wczytać tekstury\n");
-	MessageBoxW(NULL, L"Brak zdjęcia 'logo.png'.", L"Błąd", MB_OK | MB_ERROR);
+	MessageBoxW(NULL, L"Brak zdjęcia 'logo.png'.", L"Błąd", MB_OK);
         exit(EXIT_FAILURE);
     }
 
