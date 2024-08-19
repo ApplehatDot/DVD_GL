@@ -1,5 +1,6 @@
 #include <GL/freeglut.h>
 #include "stb_image.h" // Do wczytywania tekstur PNG
+#include <windows.h>
 #include <stdbool.h>
 
 // Pozycja prostokąta
@@ -74,6 +75,7 @@ void init() {
     unsigned char* image = stbi_load("logo.png", &width, &height, &channels, 0);
     if (image == NULL) {
         fprintf(stderr, "Nie można wczytać tekstury\n");
+	MessageBoxW(NULL, L"Brak zdjęcia 'logo.png'.", L"Błąd", MB_OK | MB_ERROR);
         exit(EXIT_FAILURE);
     }
 
