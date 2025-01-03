@@ -1,18 +1,68 @@
+/* DVD_GL
+ * Latest Updated on: 03.01.2025
+ * By: ApplehatDoesStuff (Github)
+ */
+
 #include <GL/freeglut.h>
 #include "stb_image.h" // Do wczytywania tekstur PNG
 #include <windows.h>
 #include <stdbool.h>
 
 // Pozycja prostokąta
+bool isFullscreen = false;
+int wWidth, wHeight;
 float rectX = 0.0f;
 float rectY = 0.0f;
 float rectWidth = 0.2f;
 float rectHeight = 0.12f;
 float speedX = 0.01f;
 float speedY = 0.01f;
-
-// Tekstura
 GLuint texture;
+
+// odczytaj rozdzielczość używaną przez użytkownika
+void getCurrentResolution(int *width, int *height){
+    *width = glutGet(GLUT_SCREEN_WIDTH);
+    *height = glutGet(GLUT_SCREEN_HEIGHT);
+}
+
+// Funkcja do przełączania się między trybem pełnoekranowym a okienkowym
+void toggleFullscreen() {
+    if (isFullscreen) {
+        wWidth = 800;
+        wHeight = 600;
+
+        glutReshapeWindow(wWidth, wHeight);
+        glutPositionWindow(100, 100);
+    } else {
+        int screenWidth, screenHeight;
+        getCurrentResolution(&screenWidth, &screenHeight);
+        wWidth = screenWidth;
+        wHeight = screenHeight;
+        glutFullScreen();
+        glutReshapeWindow(screenWidth, screenHeight);
+    }
+    isFullscreen = !isFullscreen;
+}
+
+// Funkcja obsługi klawiszy
+void handleKeypress(int key, int x, int y) {
+    switch (key) {
+        case VK_ESCAPE: // Klawisz Escape
+            exit(0);
+        case GLUT_KEY_F12: // Klawisz F12
+            toggleFullscreen();
+            break;
+        case GLUT_KEY_F2:
+            wWidth = 800;
+            wHeight = 600;
+
+            glutReshapeWindow(wWidth, wHeight);
+            glutPositionWindow(100, 100);
+            break;
+        default:
+            break;
+    }
+}
 
 // Funkcja rysująca prostokąt
 void display() {
@@ -35,6 +85,9 @@ void display() {
 
 // Funkcja wywoływana przy zmianie rozmiaru okna
 void reshape(int w, int h) {
+    wWidth = w;
+    wHeight = h;
+	
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -91,12 +144,14 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(800, 600);
+    glutInitWindowPosition(100, 100);
     glutCreateWindow("DVD screensaver thing.");
 
     init();
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
+    glutSpecialFunc(handleKeypress); // Rejestracja funkcji obsługi klawiszy
     glutTimerFunc(25, update, 0); // Rozpoczęcie animacji
 
     glutMainLoop();
